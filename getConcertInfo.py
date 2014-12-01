@@ -20,7 +20,7 @@ import curses
 import locale
 import re
 # import sys
-from urllib import urlopen
+from urllib.request import urlopen
 
 def getMonth(n):
     """Return a month name for a given integer n."""
@@ -45,8 +45,7 @@ def concertList(url):
     { "Artist name":
         [
             { Concert 1 Library },
-            { Concert 2 Library } ...
-        ], ...
+            { Concert 2 Library } ...  ], ...
     }
 
     Requires:
@@ -56,7 +55,9 @@ def concertList(url):
         formatConcert()
     """
     site = urlopen(url)
-    site_data = site.readlines()
+    site_data = []
+    for line in site.readlines():
+        site_data.append(str(line, encoding='utf8'))
     site.close()
 #   All concert information is denoted with table cell tags
     artist_tag = "<td "
@@ -147,7 +148,7 @@ def populateInfoWin(win, concerts, name):
     win.clear()
     win.border()
     MARGIN = 4
-    win.addstr(MARGIN / 2, MARGIN / 2, name, curses.A_UNDERLINE)
+    win.addstr(MARGIN // 2, MARGIN // 2, name, curses.A_UNDERLINE)
     row = MARGIN
     for c in concerts:
         day = c["day"] + " "
@@ -188,7 +189,7 @@ def main(screen):
     screen.addstr(MAX_Y - MARGIN,MAX_X - (len(info) + 2 * MARGIN),info)
 #   Create sub windows
     SUB_Y = MAX_Y - (2 * MARGIN)
-    SUB_X = (MAX_X / 2) - (2 * MARGIN)
+    SUB_X = (MAX_X // 2) - (2 * MARGIN)
     LIST_WIN = screen.subwin(SUB_Y, SUB_X, MARGIN, MARGIN)
     LIST_MID = int((LIST_WIN.getmaxyx()[0]) / 2)
     INFO_WIN = screen.subwin(SUB_Y, SUB_X , MARGIN, (2 * MARGIN + SUB_X))
